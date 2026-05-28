@@ -2,7 +2,6 @@ import { useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Eraser, Upload, Download, X, CheckCircle2, Sparkles, RefreshCw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { downloadBlob } from '@/lib/api'
 
 function UploadZone({ image, onChange }) {
   const [drag, setDrag] = useState(false)

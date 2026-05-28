@@ -28,7 +28,7 @@ class Settings(BaseSettings):
     # Background removal toggle
     enable_background_removal: bool = True
 
-    model_config = SettingsConfigDict(env_file=BASE_DIR / ".env", env_file_encoding="utf-8")
+    model_config = SettingsConfigDict(env_file=BASE_DIR / ".env", env_file_encoding="utf-8", extra="ignore")
 
     @property
     def cors_list(self) -> List[str]:
