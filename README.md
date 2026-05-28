@@ -1,252 +1,206 @@
-# AdFusion AI SaaS — Influencer Product Ad Generator
+# Pixolab — Free Online Image Editor
 
-AdFusion AI SaaS is a full-stack Python + React application that creates a single promotional ad image from two uploads:
-
-- **Image 1:** person / influencer / model photo
-- **Image 2:** product photo
-- **Output:** a branded social-media ad creative
-
-This upgraded version improves the previous output quality by using safer design rules: no overlapping headline, no duplicated CTA, better product stage, shadows, typography panels, cleaner composition, optional Hugging Face FLUX background, and an experimental image-to-image **AI Creative** mode.
+> A fully free, no-account-required image editing web app.  
+> Live at: **pixolab.online**
 
 ---
 
-## What changed in this upgraded version
+## Features
 
-### 1. Improved Smart Poster mode
+| Tool | Description |
+|---|---|
+| **Background Remover** | AI-powered background removal using U²-Net (rembg) |
+| **Change Background** | Swap background with an uploaded image, solid color, or AI-generated scene |
+| **Smart Poster** | 9 professional ad poster templates — upload product image, fill in text, download |
+| **Photo Studio** | Client-side photo editor with filters, adjustments, and transforms |
+| **Image Tools** | Resize, compress, and watermark — all in the browser, no upload needed |
 
-The default mode now creates a cleaner marketing layout:
-
-- top safe text area
-- product hero card/stage
-- better shadows and depth
-- cleaner CTA placement
-- no headline behind the person/product
-- readable deterministic typography
-- improved colour/background design
-- optional cutout support with `rembg`
-
-### 2. Improved AI Background mode
-
-AI Background mode uses Hugging Face FLUX only for the **background**, then applies the improved poster layout. This gives more creative backgrounds while keeping text readable and controlled.
-
-### 3. New AI Creative mode
-
-AI Creative mode is an experimental premium mode. It first creates a clean reference composition, then optionally sends that image to an image-to-image model through Hugging Face if configured.
-
-This mode is designed for later SaaS premium usage, but it requires a Hugging Face provider/model that supports image-to-image.
+- No login or account required
+- No credits or payments — 100% free
+- Photo Studio and Image Tools run entirely client-side (no server upload)
+- Fully responsive — mobile, tablet, and desktop
 
 ---
 
-## Tech stack
+## Tech Stack
+
+### Backend
+- **Python 3.11+** / **FastAPI** — REST API
+- **Pillow** — poster rendering and image compositing
+- **rembg + ONNX Runtime** — AI background removal (U²-Net model)
+- **SQLAlchemy + SQLite** — lightweight database
+- **Uvicorn** — ASGI server
 
 ### Frontend
+- **React 18 + Vite** — fast development and production builds
+- **Tailwind CSS** — utility-first styling
+- **Framer Motion** — animations
+- **Lucide React** — icons
+- **HTML5 Canvas API** — client-side image processing for Photo Studio and Image Tools
 
-- React + Vite
-- Tailwind CSS
-- Framer Motion
-- lucide-react icons
-- Modern SaaS-style UI
+---
+
+## Project Structure
+
+```
+pixolab/
+├── backend/
+│   ├── app/
+│   │   ├── main.py               # FastAPI app entry point
+│   │   ├── config.py             # Settings via pydantic-settings
+│   │   ├── services.py           # Image processing logic (Pillow)
+│   │   ├── templates_config.py   # 9 Smart Poster template definitions
+│   │   └── routes/
+│   │       ├── generation.py     # POST /api/generation/*
+│   │       └── tools.py          # POST /api/tools/*
+│   ├── storage/
+│   │   ├── uploads/              # Uploaded images (gitignored)
+│   │   └── results/              # Generated outputs (gitignored)
+│   ├── requirements.txt
+│   └── requirements-optional-ai.txt   # rembg + onnxruntime
+└── frontend/
+    ├── public/
+    │   └── favicon.svg
+    ├── src/
+    │   ├── App.jsx
+    │   ├── index.css
+    │   ├── lib/api.js             # API client
+    │   ├── components/
+    │   │   ├── Navbar.jsx
+    │   │   ├── FeatureStrip.jsx
+    │   │   ├── TemplateGallery.jsx
+    │   │   └── TemplateForm.jsx
+    │   └── pages/
+    │       ├── BackgroundRemover.jsx
+    │       ├── ChangeBackground.jsx
+    │       ├── SmartPoster.jsx
+    │       ├── PhotoStudio.jsx
+    │       └── ImageTools.jsx
+    ├── package.json
+    └── vite.config.js
+```
+
+---
+
+## Local Development
+
+### Prerequisites
+- Python 3.11+
+- Node.js 18+
 
 ### Backend
 
-- Python FastAPI
-- SQLite + SQLAlchemy
-- JWT authentication
-- Credit-based generation
-- PIL/Pillow image compositor
-- Optional Hugging Face integration
-- Stripe-ready placeholder billing
-
----
-
-## Quick start in VS Code
-
-Open the project folder in VS Code and use two terminals.
-
-### Terminal 1 — Backend
-
 ```bash
 cd backend
+
+# Create and activate virtual environment
 python -m venv .venv
-```
 
-Windows PowerShell:
-
-```bash
+# Windows
 .venv\Scripts\Activate.ps1
-```
 
-macOS/Linux:
+# macOS / Linux
+# source .venv/bin/activate
 
-```bash
-source .venv/bin/activate
-```
-
-Install dependencies:
-
-```bash
+# Install core dependencies
 pip install -r requirements.txt
+
+# Install background removal (downloads ~170 MB model on first use)
+pip install -r requirements-optional-ai.txt
+
+# Create .env
+copy .env.example .env   # Windows
+# cp .env.example .env   # macOS/Linux
+
+# Run dev server
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-Create `.env`:
+API docs available at `http://localhost:8000/docs`.
 
-Windows:
-
-```powershell
-copy .env.example .env
-```
-
-macOS/Linux:
-
-```bash
-cp .env.example .env
-```
-
-Run backend:
-
-```bash
-uvicorn app.main:app --reload --port 8000
-```
-
-Backend docs:
-
-```text
-http://localhost:8000/docs
-```
-
-### Terminal 2 — Frontend
+### Frontend
 
 ```bash
 cd frontend
 npm install
-```
-
-Create `.env`:
-
-Windows:
-
-```powershell
-copy .env.example .env
-```
-
-macOS/Linux:
-
-```bash
-cp .env.example .env
-```
-
-Run frontend:
-
-```bash
 npm run dev
 ```
 
-Frontend:
-
-```text
-http://localhost:5173
-```
+App runs at `http://localhost:5173`.
 
 ---
 
-## Recommended optional install for better cutouts
+## Environment Variables
 
-For cleaner person/product cutouts, install the optional background-removal dependencies inside the backend virtual environment:
-
-```bash
-pip install -r requirements-optional-ai.txt
-```
-
-The first `rembg` use may download model weights, so it can be slower on first generation.
-
----
-
-## Hugging Face background mode
-
-Add a new Hugging Face token to `backend/.env`:
+Create `backend/.env`:
 
 ```env
-HF_TOKEN=hf_your_new_token_here
+APP_NAME=Pixolab
+DATABASE_URL=sqlite:///./pixolab.db
+BACKEND_URL=http://localhost:8000
+FRONTEND_URL=http://localhost:5173
+CORS_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
+
+# Background removal (requires rembg installed)
+ENABLE_BACKGROUND_REMOVAL=true
+
+# Hugging Face — optional, for AI background generation
+HF_TOKEN=your_hf_token_here
+ENABLE_HF_BACKGROUND=false
 HF_MODEL_ID=black-forest-labs/FLUX.1-schnell
-HF_PROVIDER=
-ENABLE_HF_BACKGROUND=true
 ```
 
-Then select **AI Background** in the UI.
-
-Important: if you have shared your token anywhere, revoke it and create a new token. The token should have Hugging Face Inference Providers permission, and the selected model may require accepting access/terms on Hugging Face.
+> `.env` is gitignored — never commit it.
 
 ---
 
-## Experimental AI Creative mode
+## Smart Poster Templates
 
-To test image-to-image refinement, add a model that supports image-to-image:
+9 templates across 6 categories. The person/influencer image is **optional** on all templates.
 
-```env
-ENABLE_AI_CREATIVE=true
-HF_CREATIVE_MODEL_ID=black-forest-labs/FLUX.1-Kontext-dev
-```
-
-Then select **AI Creative** in the UI.
-
-If the selected provider/model fails, the backend will fall back to the improved Smart Poster output instead of breaking the app. Check the backend terminal for `[HF ERROR]` messages.
-
----
-
-## Demo flow
-
-1. Register a user.
-2. Upload a person image.
-3. Upload a product image.
-4. Select a style.
-5. Add brand name, headline, subheadline and CTA.
-6. Select Smart Poster, AI Background, or AI Creative mode.
-7. Confirm consent.
-8. Generate and download the result.
+| Template | Category |
+|---|---|
+| Tech Product Launch | Technology |
+| Elegance & Power | Fashion & Lifestyle |
+| Performance Action | Sports & Tech |
+| Beauty Glow | Beauty |
+| Sports Energy | Sports |
+| Corporate Pro | Business |
+| Premium Hero Product | Technology |
+| Influencer Split Poster | Fashion & Lifestyle |
+| Futuristic Launch | Technology |
 
 ---
 
-## Notes for SaaS launch
+## API Endpoints
 
-For production, replace local storage/SQLite with:
-
-- PostgreSQL
-- S3 / Cloudflare R2 / Cloudinary
-- Redis + Celery/RQ generation queue
-- Stripe webhooks for credit top-ups
-- admin dashboard
-- content moderation
-- rate limits
-- email verification
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/health` | Health check |
+| `GET` | `/api/generation/templates` | List all poster templates |
+| `POST` | `/api/generation/generate` | Generate a custom poster |
+| `POST` | `/api/generation/generate-template` | Generate from a template |
+| `POST` | `/api/tools/remove-background` | Remove image background |
+| `POST` | `/api/tools/change-background` | Swap image background |
 
 ---
 
-## Project structure
+## Deployment
 
-```text
-adfusion-ai-saas/
-  backend/
-    app/
-      main.py
-      config.py
-      database.py
-      models.py
-      schemas.py
-      security.py
-      services.py
-      routes/
-        auth.py
-        generation.py
-        billing.py
-    requirements.txt
-    requirements-optional-ai.txt
-    .env.example
-  frontend/
-    src/
-      App.jsx
-      pages/ImageCombiner.jsx
-      components/
-      lib/api.js
-    package.json
-    .env.example
-```
+Requires a VPS with Python support — **not** PHP shared hosting.
+
+**Recommended: Hetzner Cloud CX23** (~€3.79/mo)
+- 2 vCPU, 4 GB RAM, 40 GB SSD
+- rembg needs ~1.5–2 GB RAM; 4 GB is the minimum
+
+Suggested server stack on Ubuntu 24.04:
+- **Nginx** — reverse proxy + SSL termination
+- **Uvicorn** — FastAPI process
+- **Certbot** — free SSL via Let's Encrypt
+- **systemd** — keep the backend running as a service
+
+---
+
+## License
+
+MIT — free to use, modify, and deploy.
