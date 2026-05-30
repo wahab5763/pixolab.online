@@ -92,10 +92,9 @@ def generate(
         raise HTTPException(status_code=500, detail=f"Image generation failed: {exc}")
 
     rel_url = f"/static/results/{result_path.name}"
-    full_url = f"{settings.backend_url}{rel_url}"
 
     return {
-        "result_url": full_url,
+        "result_url": rel_url,
         "width": meta.get("width", 1080),
         "height": meta.get("height", 1080),
         "style": style,
@@ -167,10 +166,9 @@ def generate_template(
 
     tmpl = TEMPLATE_MAP[template_id]
     rel_url = f"/static/results/{result_path.name}"
-    full_url = f"{settings.backend_url}{rel_url}"
 
     return {
-        "result_url": full_url,
+        "result_url": rel_url,
         "width": meta.get("width", 1080),
         "height": meta.get("height", 1080),
         "style": tmpl["style"],
