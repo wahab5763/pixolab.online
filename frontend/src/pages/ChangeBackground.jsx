@@ -100,7 +100,7 @@ export default function ChangeBackground() {
       form.append('bg_prompt', bgMode === 'ai' ? aiPrompt : '')
       form.append('use_ai', bgMode === 'ai' ? 'true' : 'false')
 
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
+      const API_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:8000/api' : '/api')
       const res = await fetch(`${API_URL}/tools/change-background`, { method: 'POST', body: form })
       if (!res.ok) {
         const ct = res.headers.get('content-type') || ''

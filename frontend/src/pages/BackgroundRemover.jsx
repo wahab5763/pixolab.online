@@ -122,7 +122,7 @@ export default function BackgroundRemover() {
     try {
       const form = new FormData()
       form.append('image', image.file)
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
+      const API_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:8000/api' : '/api')
       const res = await fetch(`${API_URL}/tools/remove-background`, { method: 'POST', body: form })
       if (!res.ok) {
         const body = await res.text()
