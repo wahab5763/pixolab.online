@@ -28,6 +28,17 @@ class Settings(BaseSettings):
     # Background removal toggle
     enable_background_removal: bool = True
 
+    # Watermark branding on generated posters
+    watermark_free_plan: bool = True
+
+    # Optional Groq integration
+    groq_api_key: str = ""
+    enable_groq_creative: bool = False
+
+    # Optional inpainting
+    enable_inpainting: bool = False
+    inpainting_model_id: str = ""
+
     model_config = SettingsConfigDict(env_file=BASE_DIR / ".env", env_file_encoding="utf-8", extra="ignore")
 
     @property
